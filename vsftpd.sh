@@ -45,8 +45,23 @@ done < /config/htpasswd
 chown $FTP_USER:$FTP_GROUP "$FTP_HOME"
 chmod 550 "$FTP_HOME"
 
+function vsftpd_stop() {
+	PID=`cat /var/run/vsftpd.pid`
+	echo "stopping vsftpd, pid=$PID"
+	if [ $PID ] ; then
+		kill -SIGTERM $PID
+		wait "$PID"
+	fi
+	rm -f /var/run/vsftpd.pid
+	echo "stopped"
+}
+
 # run vsftpd
 # use the FTP_USER user for virtual users
 echo "starting vsftpd"
-exec /usr/sbin/vsftpd -oguest_username=$FTP_USER $VSFTPD_ARGS
+trap vsftpd_stop SIGTERM
+/usr/sbin/vsftpd -oguest_username=$FTP_USER $VSFTPD_ARGS &
+PID="$!"
+echo "$PID" > /var/run/vsftpd.pid
+wait "$PID" && exit $?
 

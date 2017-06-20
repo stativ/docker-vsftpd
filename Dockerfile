@@ -35,5 +35,5 @@ COPY ./vsftpd.sh /root/vsftpd.sh
 EXPOSE 21
 EXPOSE 50000-50100
 
-CMD /root/vsftpd.sh
+CMD ["/root/vsftpd.sh"]
 
