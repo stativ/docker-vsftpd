@@ -1,0 +1,2 @@
+auth required pam_pwdfile.so pwdfile /config/htpasswd
+account required pam_permit.so

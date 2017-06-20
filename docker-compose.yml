@@ -1,0 +1,28 @@
+version: '2'
+services:
+  ftp:
+    build: .
+    # the exposed ports
+    # when using connect_from_port_20=YES, add "20:20" to the list
+    ports:
+      - "21:21"
+      - "50000-50100:50000-50100"
+    # runtime options - change to your liking
+    # - FTP_UID - the user id used as a real user UID for virtual users.
+    #   Make sure the /srv/ftp volume is readable/writeable by this user id
+    #   on the host.
+    # - FTP_GID - same as FTP_UID, but for groups
+    # - VSFTPD_ARGS - additional arguments to VSFTPD
+    environment:
+        - FTP_UID=1000
+        - FTP_GID=100
+        - VSFTPD_ARGS=-oasync_abor_enable=YES
+    # volume configuration
+    # - /config - the volume where "htpasswd" file containing virtual
+    #   users is searched. You can use "openssl passwd -1" to generate
+    #   passwords.
+    # - /srv/ftp - root directory for ftp. The container automatically
+    #   creates a subdirectory for each virtual user in this directory.
+    volumes:
+      - "./config/:/config"
+      - "./ftp/:/srv/ftp"
